@@ -17,7 +17,7 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ xenial main universe" >> /etc/ap
 RUN apt-get update
 
 # Install basic applications
-RUN apt-get install -y git build-essential
+RUN apt-get install -y git build-essential htop
 
 # Install dev tolls
 # RUN apt-get install -y dnsutils tar curl vim wget dialog net-tools
