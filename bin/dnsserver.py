@@ -54,12 +54,13 @@ class FailureHandler:
 
 
 class MapResolver(client.Resolver):
-    def __init__(self, Finder, Amapping, NSmapping, SOAmapping, servers):
+    def __init__(self, Finder, Amapping, NSmapping, SOAmapping, CNAMEmapping, servers):
         logger.info("[MapResolver] Init.");
         self.Finder = Finder
         self.Amapping = Amapping
         self.NSmapping = NSmapping
         self.SOAmapping = SOAmapping
+        self.CNAMEmapping = CNAMEmapping
         client.Resolver.__init__(self, servers=servers)
 
     def query(self, query, timeout = None, addr = None, edns = None):
@@ -147,8 +148,20 @@ class MapResolver(client.Resolver):
         return [(),(),()]
 
     def lookupCanonicalName(self, name, timeout = None, addr = None):
-        logger.info("[MapResolver] Lookup Canonical name, not implemented yet.")
-        return [(), (), ()]
+        logger.info("[MapResolver] Lookup Canonical name: [%s]" % (name))
+        if name in self.CNAMEmapping:
+            logger.info("[MapResolver] Lookup Canonical name, found in CNAMEmapping: [%s]" % (self.CNAMEmapping[name]))
+            result = self.CNAMEmapping[name]
+            ttl = result['ttl']
+            record = result['record']
+            def packResultCNAME(value):
+                return [[dns.RRHeader(name, dns.CNAME, dns.IN, value['ttl'], dns.Record_CNAME(value['record'], value['ttl']), True)], (), ()]
+            ret = packResultCNAME(result)
+            logger.info("CNAME\t[domain: %s]\t[return: %s]" % (name, result))
+            return ret
+        else:
+            logger.info("[MapResolver] Lookup Canonical name, not found in CNAMEmapping.")
+            return self._lookup(name, dns.IN, dns.CNAME, timeout)
 
 class SmartResolverChain(resolve.ResolverChain):
 
@@ -190,6 +203,9 @@ class SmartResolverChain(resolve.ResolverChain):
 
     def lookupNameservers(self, name, timeout = None, addr = None, edns = None):
         return self._lookup(name, dns.IN, dns.NS, timeout, addr, edns)
+
+    def lookupCanonicalName(self, name, timeout = None, addr = None, edns = None):
+        return self._lookup(name, dns.IN, dns.CNAME, timeout, addr, edns)
 
 class SmartDNSFactory(server.DNSServerFactory):
     def handleQuery(self, message, protocol, address):

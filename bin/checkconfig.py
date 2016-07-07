@@ -51,6 +51,13 @@ def checkNSmapConfig(c):
 	print "[INFO] 'NS' configuration check succ"
 	return True
 
+def checkCNAMEmapConfig(c):
+	for url,ref in c.items():
+		ref['record']
+		int(ref['ttl'])
+	print "[INFO] 'CNAME' configuration check succ"
+	return True
+
 def checkSOAmapConfig(c):
 	for url,ref in c.items():
 		#must have 'record' and 'ttl' in every url
@@ -107,7 +114,8 @@ def checkconfig():
 		Amapping = loadconfig(conf['AFILE'])
 		NSmapping = loadconfig(conf['NSFILE'])
 		SOAmapping = loadconfig(conf['SOAFILE'])
-		if not checkAmapConfig(Amapping) or not checkNSmapConfig(NSmapping) or not checkSOAmapConfig(SOAmapping):
+		CNAMEmapping = loadconfig(conf['CNAMEFILE'])
+		if not checkAmapConfig(Amapping) or not checkNSmapConfig(NSmapping) or not checkSOAmapConfig(SOAmapping) or not checkCNAMEmapConfig(CNAMEmapping):
 			return False
 		if not checkIPList("../data/ip.csv"):
 			return False

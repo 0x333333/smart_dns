@@ -29,7 +29,9 @@ RUN apt-get install -y python python-dev python-distribute python-pip
 # DNS
 ######
 
-RUN git clone https://github.com/zp-j/smart_dns.git 
+ADD . /smartdns
+WORKDIR /smartdns/script
 RUN pip install Twisted==12.2.0
 RUN pip install requests
-RUN cd ./smart_dns && mkdir log && cd script && ./run_dns.sh
+RUN mkdir /smartdns/log
+CMD ./run_dns.sh && tail -f /smartdns/log/access_dns.log

@@ -75,7 +75,7 @@ def prepare_run(run_env):
 	Amapping = loadconfig(conf['AFILE'])
 	NSmapping = loadconfig(conf['NSFILE'])
 	SOAmapping = loadconfig(conf['SOAFILE'])
-
+	CNAMEmapping = loadconfig(conf['CNAMEFILE'])
 	# set up a resolver that uses the mapping or a secondary nameserver
 	dnsforward = []
 	for i in conf['dnsforward_ip']:
@@ -83,7 +83,7 @@ def prepare_run(run_env):
 
 	for ifc,ip in get_local_ip():
 		# create the protocols
-		SmartResolver = dnsserver.MapResolver(Finder, Amapping, NSmapping, SOAmapping, servers=dnsforward)
+		SmartResolver = dnsserver.MapResolver(Finder, Amapping, NSmapping, SOAmapping, CNAMEmapping, servers=dnsforward)
 		f = dnsserver.SmartDNSFactory(caches=[cache.CacheResolver()], clients=[SmartResolver])
 		p = dns.DNSDatagramProtocol(f)
 		f.noisy = p.noisy = False
@@ -106,3 +106,4 @@ run_server(env)
 # run it through twistd!
 if __name__ == '__main__':
     print "Usage: twistd -y %s" % sys.argv[0]
+

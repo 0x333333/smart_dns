@@ -1,0 +1,10 @@
+#Smart DNS NS record config file
+
+#CNAME record
+mail.test.com:
+  record: test.test.com
+  ttl: 600
+
+www.test.com:
+  record: test.test.com
+  ttl: 600

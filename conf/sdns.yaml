@@ -17,3 +17,6 @@ SOAFILE: ../conf/soa.yaml
 
 #A record file
 AFILE: ../conf/a.yaml
+
+#CNAME record file
+CNAMEFILE: ../conf/cname.yaml
